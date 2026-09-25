@@ -1,18 +1,20 @@
+import { GeminiContent } from "@/types/chat";
+
 export async function generateChatResponse(
-  history: { role: string; parts: { text: string }[] }[],
+  history: GeminiContent[],
   latestMessage: string,
   systemInstruction: string
-) {
+): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY environment variable is missing");
+    throw new Error("GEMINI_API_KEY environment variable is not configured.");
   }
 
   const models = ["gemini-3.6-flash", "gemini-1.5-flash", "gemini-2.5-flash"];
-  const contents = [
+  const contents: GeminiContent[] = [
     ...history,
-    { role: "user", parts: [{ text: latestMessage }] }
+    { role: "user", parts: [{ text: latestMessage }] },
   ];
 
   let lastError: Error | null = null;
@@ -43,7 +45,7 @@ export async function generateChatResponse(
 
         if (!response.ok) {
           const errText = await response.text();
-          throw new Error(`Gemini API Error (${response.status}): ${errText}`);
+          throw new Error(`Gemini API error (${response.status}): ${errText}`);
         }
 
         const data = await response.json();
@@ -54,15 +56,15 @@ export async function generateChatResponse(
           return text.trim();
         }
 
-        throw new Error("Gemini returned an empty response text");
+        throw new Error("Gemini API returned an empty response.");
       } catch (err: any) {
-        lastError = err;
-        if (err.message && err.message.includes("404")) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        if (err?.message && err.message.includes("404")) {
           break;
         }
       }
     }
   }
 
-  throw lastError || new Error("Failed to generate response from Gemini API");
+  throw lastError || new Error("Failed to generate response from Gemini API.");
 }

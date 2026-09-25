@@ -52,11 +52,13 @@ export default function Home() {
     setInput('');
     setLoading(true);
 
+    const payloadMessages = updatedMessages.filter((msg) => !msg.isError);
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ messages: payloadMessages }),
       });
 
       const data = await res.json();
@@ -71,8 +73,9 @@ export default function Home() {
           ...prev,
           {
             role: 'assistant',
-            content: 'Arey, thoda issue ho gaya. Phir se try karega please? 🥺',
+            content: data.error || 'Arey, thoda issue ho gaya. Phir se try karega please? 🥺',
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isError: true,
           },
         ]);
       }
@@ -83,6 +86,7 @@ export default function Home() {
           role: 'assistant',
           content: 'Internet ya server problem lag raha hai. Ek baar check karle na! 💕',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isError: true,
         },
       ]);
     } finally {
