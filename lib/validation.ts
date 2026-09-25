@@ -26,7 +26,7 @@ export async function parseAndValidateChatRequest(
     };
   }
 
-  const { messages } = body;
+  const { messages, stream = true } = body;
   if (!Array.isArray(messages)) {
     return {
       valid: false,
@@ -50,7 +50,7 @@ export async function parseAndValidateChatRequest(
       continue;
     }
 
-    const { role, content, time, isError } = item;
+    const { role, content, time, isError, image } = item;
 
     if (isError === true) {
       continue;
@@ -66,6 +66,9 @@ export async function parseAndValidateChatRequest(
         role: role as Role,
         content: content.trim(),
         ...(time ? { time: String(time) } : {}),
+        ...(typeof image === "string" && image.startsWith("data:")
+          ? { image }
+          : {}),
       });
     }
   }
@@ -73,7 +76,8 @@ export async function parseAndValidateChatRequest(
   if (cleanMessages.length === 0) {
     return {
       valid: false,
-      error: "No valid messages found in payload. Each message must have a valid role and non-empty content.",
+      error:
+        "No valid messages found in payload. Each message must have a valid role and non-empty content.",
       statusCode: 400,
     };
   }
@@ -92,6 +96,8 @@ export async function parseAndValidateChatRequest(
     data: {
       cleanMessages,
       latestMessageContent: lastMessage.content,
+      latestMessageImage: lastMessage.image,
+      stream: Boolean(stream),
     },
   };
 }

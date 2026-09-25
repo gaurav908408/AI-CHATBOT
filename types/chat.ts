@@ -5,11 +5,12 @@ export interface ChatMessage {
   content: string;
   time?: string;
   isError?: boolean;
+  image?: string;
 }
 
-export interface GeminiPart {
-  text: string;
-}
+export type GeminiPart =
+  | { text: string }
+  | { inline_data: { mime_type: string; data: string } };
 
 export interface GeminiContent {
   role: 'user' | 'model';
@@ -19,11 +20,14 @@ export interface GeminiContent {
 export interface ChatRequestPayload {
   messages: ChatMessage[];
   systemInstruction?: string;
+  stream?: boolean;
 }
 
 export interface ValidatedChatData {
   cleanMessages: ChatMessage[];
   latestMessageContent: string;
+  latestMessageImage?: string;
+  stream: boolean;
 }
 
 export type ValidationResult =
