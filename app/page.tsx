@@ -5,6 +5,7 @@ import { ChatMessage } from '@/types/chat';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
@@ -18,7 +19,18 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
+    const savedTheme = (localStorage.getItem('theme') as 'light' | 'dark') || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -91,6 +103,16 @@ export default function Home() {
           </div>
         </div>
         <div className="header-actions">
+          {isMounted && (
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
+          )}
           <span>📞</span>
           <span>📹</span>
           <span>⋮</span>
