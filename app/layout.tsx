@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: ' chatboat',
-  description: 'WhatsApp Pink Theme GF Companion AI',
+  title: 'AI Chatbot',
+  description: 'AI Chatbot Assistant',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

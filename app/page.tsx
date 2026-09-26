@@ -5,11 +5,11 @@ import { ChatMessage } from '@/types/chat';
 
 const DEFAULT_INITIAL_MESSAGE: ChatMessage = {
   role: 'assistant',
-  content: 'Hey! How are you doing? I had a great day today, tell me what are you up to? 💕',
+  content: 'Hello! I am AI Chatbot. How can I help you today? 🤖',
   time: '05:18 PM',
 };
 
-const STORAGE_KEY = 'ananya_chat_messages';
+const STORAGE_KEY = 'ai_chatbot_messages';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -242,11 +242,11 @@ export default function Home() {
         <div className="header-info">
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-            alt="Ananya Sharma"
+            alt="AI Chatbot"
             className="avatar"
           />
           <div>
-            <div className="user-name">Ananya Sharma 🌸</div>
+            <div className="user-name">AI Chatbot 🤖</div>
             <div className="user-status">
               {loading ? 'typing...' : 'online'}
             </div>
